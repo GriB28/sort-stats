@@ -1,6 +1,7 @@
 from colorama import Fore as F, Style as S, init as c_init
 from os import system, mkdir
 from os.path import exists
+from platform import system as platform_name
 
 from config import cfg, j2
 
@@ -8,11 +9,18 @@ c_init(autoreset=True)
 
 
 print(F.LIGHTBLACK_EX + S.DIM + "checking for binaries...", end=' ')
-if all(exists(path) for path in cfg.BINARIES):
+if platform_name() == "Linux":
+    bins = cfg.BINARIES_LINUX
+elif platform_name() == "Windows":
+    bins = cfg.BINARIES_WINDOWS
+else:
+    bins = tuple()
+if all(exists(path) for path in bins):
     print(F.GREEN + "[OK]")
 else:
     print(F.RED + "[NOT BUILT]")
     exit()
+
 print(F.LIGHTBLACK_EX + S.DIM + "checking for directories...", end=' ')
 if exists("data/"):
     print(F.GREEN + "[OK]")

@@ -13,12 +13,20 @@ class PATH:
     BIN_local = "bin/"
 
 
-BINARIES = (
+BINARIES_LINUX = (
     PATH.BIN + "bubble_0",
     PATH.BIN + "insertion",
     PATH.BIN + "selection",
     #PATH.BIN + "merge",
     #PATH.BIN + "hoar",
     #PATH.BIN + "quick"
+)
+BINARIES_WINDOWS = (
+    PATH.BIN + "bubble_0.exe",
+    PATH.BIN + "insertion.exe",
+    PATH.BIN + "selection.exe",
+    #PATH.BIN + "merge.exe",
+    #PATH.BIN + "hoar.exe",
+    #PATH.BIN + "quick.exe"
 )
 POSSIBLE_SORTS = ("bubble_0", "bubble_1", "bubble_2", "insertion", "selection", "merge", "hoar", "quick")
