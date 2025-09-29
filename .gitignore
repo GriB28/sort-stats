@@ -5,6 +5,9 @@
 
 /*.exe
 /*.o
+/*.csv
 /sort-stats
+/sort-stats-sample
 
 /img
+/data
