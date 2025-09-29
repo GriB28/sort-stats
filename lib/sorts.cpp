@@ -3,7 +3,7 @@
 using std::size_t;
 
 
-void sort::bubble(int list[], const size_t &length) {
+void sort::bubble(int *list, const size_t &length) {
     for (size_t i = 0; i < length - 1; i++) {
         bool breaker = true;
         for (size_t j = 0; j < length - i - 1; j++) {
@@ -18,9 +18,9 @@ void sort::bubble(int list[], const size_t &length) {
     }
 }
 
-void sort::insertion(int list[], const size_t &length) {
+void sort::insertion(int *list, const size_t &length) {
     for (size_t i = 1; i < length; i++) {
-        int current_value = list[i];
+        const int current_value = list[i];
         size_t j = i - 1;
         while (j > 0 && list[j] > current_value) {
             list[j + 1] = list[j];
@@ -30,7 +30,7 @@ void sort::insertion(int list[], const size_t &length) {
     }
 }
 
-void sort::selection(int list[], const size_t &length) {
+void sort::selection(int *list, const size_t &length) {
     for (size_t i = 0; i < length; i++) {
         int local_min = list[i];
         for (size_t j = i + 1; j < length; j++) {
@@ -44,7 +44,7 @@ void sort::selection(int list[], const size_t &length) {
     }
 }
 
-void sort::count(int list[], const size_t &length) {
+void sort::count(int *list, const size_t &length) {
     int min = list[0], max = list[0];
     for (size_t i = 1; i < length; i++) {
         if (list[i] < min) min = list[i];
@@ -60,4 +60,8 @@ void sort::count(int list[], const size_t &length) {
         while (counter[i]-- > 0)
             list[index++] = i + min;
     delete[] counter;
+}
+
+void sort::merge(int *list, const size_t &length) {
+
 }
