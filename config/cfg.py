@@ -15,8 +15,8 @@ class PATH:
 
 BINARIES = (
     PATH.BIN + "bubble_0",
-    #PATH.BIN + "insertion",
-    #PATH.BIN + "selection",
+    PATH.BIN + "insertion",
+    PATH.BIN + "selection",
     #PATH.BIN + "merge",
     #PATH.BIN + "hoar",
     #PATH.BIN + "quick"
