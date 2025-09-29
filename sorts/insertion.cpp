@@ -2,7 +2,7 @@
 #include <chrono>
 #include <random>
 
-#include "lib/sorts.h"
+#include "../lib/sorts.h"
 using std::fstream;
 
 
@@ -20,7 +20,7 @@ constexpr size_t MAX_LENGTH = 100000000;
 static int array[MAX_LENGTH];
 int main() {
     fstream data("data/input.csv", std::ios::in);
-    fstream result("data/bubble_0.csv", std::ios::app);
+    fstream result("data/insertion.csv", std::ios::app);
 
     size_t length;
     int max, min;
@@ -28,7 +28,7 @@ int main() {
     make_array(min, max, length, array);
 
     auto start = std::chrono::high_resolution_clock::now();
-    sort::bubble(array, length);
+    sort::insertion(array, length);
     auto end = std::chrono::high_resolution_clock::now();
 
     result << (end - start).count() << ',' << length << '\n';
