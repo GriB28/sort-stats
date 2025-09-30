@@ -22,6 +22,8 @@ namespace utils {
     long long get_time();
     int randomize_an_int(const int &min, const int &max);
     void randomize_array(const int &min, const int &max, const size_t &length, int *array_link);
+    void ascending_array(const int &min, const int &max, const size_t &length, int *array_link);
+    void descending_array(const int &min, const int &max, const size_t &length, int *array_link);
 }
 
 #endif
