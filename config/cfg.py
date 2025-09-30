@@ -15,18 +15,22 @@ class PATH:
 
 BINARIES_LINUX = (
     PATH.BIN + "bubble_0",
+    PATH.BIN + "bubble_1",
+    PATH.BIN + "bubble_2",
     PATH.BIN + "insertion",
     PATH.BIN + "selection",
-    #PATH.BIN + "merge",
-    #PATH.BIN + "hoar",
-    #PATH.BIN + "quick"
+    PATH.BIN + "merge",
+    PATH.BIN + "heap",
+    PATH.BIN + "quick"
 )
 BINARIES_WINDOWS = (
     PATH.BIN + "bubble_0.exe",
+    PATH.BIN + "bubble_1.exe",
+    PATH.BIN + "bubble_2.exe",
     PATH.BIN + "insertion.exe",
     PATH.BIN + "selection.exe",
-    #PATH.BIN + "merge.exe",
-    #PATH.BIN + "hoar.exe",
-    #PATH.BIN + "quick.exe"
+    PATH.BIN + "merge.exe",
+    PATH.BIN + "heap.exe",
+    PATH.BIN + "quick.exe"
 )
-POSSIBLE_SORTS = ("bubble_0", "bubble_1", "bubble_2", "insertion", "selection", "merge", "hoar", "quick")
+POSSIBLE_SORTS = ("bubble_0", "bubble_1", "bubble_2", "insertion", "selection", "merge", "heap", "quick")
