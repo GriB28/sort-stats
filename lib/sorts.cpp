@@ -143,7 +143,6 @@ void sort::do_heap(int *list, const size_t &length, const size_t &index) {
         do_heap(list, length, max);
     }
 }
-
 void sort::heap(int *list, const size_t &length) {
     for (size_t i = length / 2; i > 0; i--)
         do_heap(list, length, i - 1);

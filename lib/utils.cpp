@@ -16,13 +16,13 @@ int utils::randomize_an_int(const int &min, const int &max) {
     std::uniform_int_distribution<int> d(min, max);
     return d(e);
 }
-
-void utils::randomize_array(const int &min, const int &max, const size_t &length, int *array_link) {
+void utils::random_array(const int &min, const int &max, const size_t &length, int *array_link) {
     for (size_t i = 0; i < length; i++)
         array_link[i] = randomize_an_int(min, max);
 }
+
 void utils::ascending_array(const int &min, const int &max, const size_t &length, int *array_link) {
-    randomize_array(min, max, length, array_link);
+    random_array(min, max, length, array_link);
     sort::merge(array_link, length);
 }
 void utils::descending_array(const int &min, const int &max, const size_t &length, int *array_link) {
@@ -34,3 +34,11 @@ void utils::descending_array(const int &min, const int &max, const size_t &lengt
         array_link[length - i - 1] = t;
     }
 }
+
+
+void utils::prepare_result_file(fstream *&filestream, const string &graph_name, const string &x_axis_name, const string &y_axis_name) {
+    stream_link = filestream;
+    *stream_link << '#' << graph_name << '\t' << x_axis_name << '\t' << y_axis_name << '\n';
+}
+
+void utils::add_result(const size_t &length, const long long &dtime) { *stream_link << length << ',' << dtime << '\n'; }

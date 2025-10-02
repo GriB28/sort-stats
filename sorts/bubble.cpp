@@ -1,22 +1,45 @@
 #include <fstream>
+#include <string>
 #include "../lib/lib.h"
 using std::fstream;
+using std::string;
 
 
-constexpr size_t MAX_LENGTH = 100000000;
-static int array[MAX_LENGTH];
+static int array[utils::MAX_LENGTH];
 int main() {
     fstream data("data/input.csv", std::ios::in);
-    fstream result("data/bubble.csv", std::ios::app);
 
-    size_t length;
+    size_t length, iterations;
     int max, min;
-    data >> length >> max >> min;
-    utils::randomize_array(min, max, length, array);
+    short array_type;
+    string output_file, graph_name, Ox, Oy;
+    data >> output_file >> graph_name >> Ox >> Oy;
+    data >> length >> max >> min >> array_type >> iterations;
 
-    long long start_time_stamp = utils::get_time();
-    sort::bubble(array, length);
+    auto *result = new fstream("data/" + output_file + ".csv", std::ios::out);
+    utils::prepare_result_file(result, graph_name, Ox, Oy);
 
-    result << (utils::get_time() - start_time_stamp) << ',' << length << '\n';
+    for (size_t i = 0; i < iterations; i++) {
+        switch (array_type) {
+            case 0:
+                utils::random_array(min, max, length, array);
+                break;
+            case 1:
+                utils::ascending_array(min, max, length, array);
+                break;
+            case 2:
+                utils::descending_array(min, max, length, array);
+                break;
+            default:
+                break;
+        }
+
+        const long long start_time_stamp = utils::get_time();
+        sort::bubble(array, length);
+        const long long stop_time_stamp = utils::get_time();
+
+        utils::add_result(length, stop_time_stamp - start_time_stamp);
+    }
+    delete result;
     return 0;
 }
