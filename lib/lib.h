@@ -27,6 +27,7 @@ namespace utils {
     static fstream *stream_link = nullptr;
 
     long long get_time();
+    void generate_array(const short &type, const int &min, const int &max, const size_t &length, int *array_link);
 
     int randomize_an_int(const int &min, const int &max);
     void random_array(const int &min, const int &max, const size_t &length, int *array_link);

@@ -9,6 +9,22 @@ long long utils::get_time() {
         ).count();
 }
 
+void utils::generate_array(const short &type, const int &min, const int &max, const size_t &length, int *array_link) {
+    switch (type) {
+        case 0:
+            random_array(min, max, length, array_link);
+            break;
+        case 1:
+            ascending_array(min, max, length, array_link);
+            break;
+        case 2:
+            descending_array(min, max, length, array_link);
+            break;
+        default:
+            break;
+    }
+}
+
 
 int utils::randomize_an_int(const int &min, const int &max) {
     const unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
