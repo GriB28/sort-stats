@@ -2,6 +2,7 @@ from colorama import Fore as F, Style as S
 from os import system, listdir
 from os.path import exists
 from platform import system as platform_name
+import matplotlib.pyplot as plt
 
 from config import cfg, j2
 
@@ -18,15 +19,15 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                   ">", F.GREEN + S.BRIGHT + "settings (literally)")
             print(F.LIGHTBLUE_EX + "call <call-string>               ",
                   ">", F.GREEN + S.BRIGHT + "calls one of the following actions:")
-            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <delta_length> <graph_name>",
+            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>",
                   ">", F.GREEN + S.BRIGHT + "launches sorting algorithm with following\n"
                                             "parameters (delta length is max additional "
                                             "value that forms an array of lengths for "
-                                            "generated int arrays: checked length\n"
-                                            "with L and dL will be " + S.NORMAL + "[L, L+dL)" + S.BRIGHT + ")")
-            print(F.LIGHTBLUE_EX + " > render <filename>                                        ",
+                                            "generated int arrays: checked\n"
+                                            "length with L and dL will be " + S.NORMAL + "[L, L+dL)" + S.BRIGHT + ")")
+            print(F.LIGHTBLUE_EX + " > render <filename> [<color>]                     ",
                   ">", F.GREEN + S.BRIGHT + "renders a plot from a datafile with given name")
-            print(F.LIGHTBLUE_EX + " > script <filename>                                        ",
+            print(F.LIGHTBLUE_EX + " > script <filename>                               ",
                   ">", F.GREEN + S.BRIGHT + "loads prepared script from a file")
             print()
             print()
@@ -92,21 +93,18 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                     output_file_name = output_file_name[right_dot_marker:]
 
                 array_type = int(c[4])
-                iterations = int(c[5])
-
-                graph_name = ' '.join(c[6:]).replace(' ', '_')  # энкодим пробелы, чтобы не думать сильно
+                graph_name = ' '.join(c[5:]).replace(' ', '_')  # энкодим пробелы, чтобы не думать сильно
                 if len(graph_name) == 0:
                     raise IndexError("not enough iterations provided: 0")
 
-                Ox = 'time,_s'          # аналогичный энкодинг
-                Oy = 'length,_elements'
+                x_axis = 'length,_elements'    # аналогичный энкодинг
+                y_axis = 'time,_ns'
 
                 with open("data/input.csv", 'w', encoding='utf8') as input_file:
-                    print(
-                        output_file_name, graph_name, Ox, Oy,
-                        settings_link['length'], settings_link["max"], settings_link["min"],
-                        array_type, iterations,
-                        file=input_file)
+                    print(output_file_name, graph_name, x_axis, y_axis,
+                          settings_link['length'], settings_link["max"], settings_link["min"],
+                          array_type, settings_link["delta"],
+                          file=input_file)
 
                 print(F.LIGHTBLACK_EX + "> calculating...")
                 if platform_name() == 'Linux':
@@ -119,7 +117,29 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 print(F.LIGHTBLACK_EX + "> finished...")
 
             elif c[1] == 'render':
-                pass
+                if c[2] == 'combo':
+                    pass
+
+                else:
+                    filename = c[2]
+                    color = c[3] if len(c) > 3 else '#fa8072'
+
+                    with open(filename) as csv:
+                        legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
+                        x, y = list(), list()
+                        for line in csv.readlines():
+                            line = line.split(',')
+                            x.append(int(line[0]))
+                            y.append(int(line[1]))
+                    plt.figure(figsize=(11, 8))
+                    plt.scatter(x, y, color=color, s=2)
+                    plt.title(legend[0])
+                    plt.xlabel(legend[1])
+                    plt.ylabel(legend[2])
+                    save_file = filename.replace('.csv', '.png')
+                    plt.savefig(save_file)
+                    print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
+
 
             elif c[1] == 'script':
                 filename = ' '.join(c[2:])

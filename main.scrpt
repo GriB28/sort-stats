@@ -1,8 +1,5 @@
-settings set max 10000
-settings set min -10000
-settings set length 1000
-call sort bubble_0 bubble_0_asc_1k 1 1000 random array
-settings set length 2000
-call sort bubble_0 bubble_0_asc_2k 1 1000 random array
-settings set length 3000
-call sort bubble_0 bubble_0_asc_3k 1 1000 random array
+settings set max 100000
+settings set min -100000
+settings set length 1
+call sort bubble_0 bubble_0_1 1 10000 random array
+call render data/bubble_0_1.csv
