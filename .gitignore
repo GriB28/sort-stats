@@ -2,6 +2,7 @@
 /.idea/
 /cmake-build-debug/
 /CMakeLists.txt
+/config/__pycache__
 
 /*.exe
 /*.o
@@ -11,3 +12,4 @@
 
 /img
 /data
+/*.txt
