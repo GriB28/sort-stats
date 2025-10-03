@@ -1,12 +1,12 @@
 from colorama import Fore as F, Style as S
-from os import system
+from os import system, listdir
+from os.path import exists
 from platform import system as platform_name
 
 from config import cfg, j2
 
 
 def handle(c: list[str], settings_link: dict[str, ...]):
-    print()
     try:
         if c[0] == 'menu':
             print(F.CYAN + "== MENU ==")
@@ -18,8 +18,12 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                   ">", F.GREEN + S.BRIGHT + "settings (literally)")
             print(F.LIGHTBLUE_EX + "call <call-string>               ",
                   ">", F.GREEN + S.BRIGHT + "calls one of the following actions:")
-            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <cycles> <graph_name>",
-                  ">", F.GREEN + S.BRIGHT + "launches sorting algorithm with following parameters")
+            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <delta_length> <graph_name>",
+                  ">", F.GREEN + S.BRIGHT + "launches sorting algorithm with following\n"
+                                            "parameters (delta length is max additional "
+                                            "value that forms an array of lengths for "
+                                            "generated int arrays: checked length\n"
+                                            "with L and dL will be " + S.NORMAL + "[L, L+dL)" + S.BRIGHT + ")")
             print(F.LIGHTBLUE_EX + " > render <filename>                                        ",
                   ">", F.GREEN + S.BRIGHT + "renders a plot from a datafile with given name")
             print(F.LIGHTBLUE_EX + " > script <filename>                                        ",
@@ -77,7 +81,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
 
             if c[1] == 'sort':
                 sort = c[2]
-                if sort not in cfg.POSSIBLE_SORTS:
+                if sort not in listdir(cfg.PATH.BIN_local):
                     raise ValueError("bad sort name")
 
                 print(F.LIGHTBLACK_EX + "> generating starting config...")
@@ -119,16 +123,19 @@ def handle(c: list[str], settings_link: dict[str, ...]):
 
             elif c[1] == 'script':
                 filename = ' '.join(c[2:])
+                if not exists(filename):
+                    filename += '.scrpt'
                 with open(filename, encoding='utf8') as script:
                     for line in script.readlines():
                         line = line.strip()
                         print(F.LIGHTBLACK_EX + "$ received:", line)
                         handle(line.split(), settings_link)
 
+
         else:
             raise ValueError("parsing failed")
 
-
+        print()
     except Exception as e:
         args = list(e.args)
         print(
