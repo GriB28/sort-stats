@@ -21,12 +21,12 @@ void sort::bubble(int *list, const size_t &length) {
 void sort::insertion(int *list, const size_t &length) {
     for (size_t i = 1; i < length; i++) {
         const int current_value = list[i];
-        size_t j = i - 1;
-        while (j > 0 && list[j] > current_value) {
-            list[j + 1] = list[j];
+        size_t j = i;
+        while (j > 0 && list[j - 1] > current_value) {
+            list[j] = list[j - 1];
             j--;
         }
-        list[j + 1] = current_value;
+        list[j] = current_value;
     }
 }
 
@@ -64,15 +64,13 @@ void sort::count(int *list, const size_t &length) {
 
 
 void sort::do_merge(int *list, const size_t &left, const size_t &middle, const size_t &right) {
-    const size_t left_length = middle - left + 1;
-    const size_t right_length = right - middle;
-
-    int *left_sublist = new int[left_length], *right_sublist = new int[right_length];
+    const size_t left_length = middle - left + 1, right_length = right - middle;
+    const auto left_sublist = new int[left_length], right_sublist = new int[right_length];
 
     for (size_t i = 0; i < left_length; i++)
         left_sublist[i] = list[left + i];
     for (size_t i = 0; i < right_length; i++)
-        right_sublist[i] = list[middle + 1 + right_length];
+        right_sublist[i] = list[middle + 1 + i];
 
     size_t i = 0, j = 0, k = left;
 
@@ -81,17 +79,17 @@ void sort::do_merge(int *list, const size_t &left, const size_t &middle, const s
         else list[k++] = right_sublist[j++];
     }
 
-    while (i++ < left_length)
-        list[k++] = left_sublist[i];
-    while (j++ < right_length)
-        list[k++] = right_sublist[j];
+    while (i < left_length)
+        list[k++] = left_sublist[i++];
+    while (j < right_length)
+        list[k++] = right_sublist[j++];
 
     delete[] left_sublist;
     delete[] right_sublist;
 }
 void sort::merge(int *list, const size_t &left, const size_t &right) {
     if (left < right) {
-        const size_t middle = (right + left) / 2;
+        const size_t middle = left + (right - left) / 2;
 
         merge(list, left, middle);
         merge(list, middle + 1, right);
@@ -99,7 +97,6 @@ void sort::merge(int *list, const size_t &left, const size_t &right) {
         do_merge(list, left, middle, right);
     }
 }
-
 void sort::merge(int *list, const size_t &length) { merge(list, 0, length - 1); }
 
 void sort::quick(int *list, const size_t &low, const size_t &high) {
