@@ -24,7 +24,7 @@ int main() {
 
     cout << "configuring is over.\nstarting calculating...\n";
     for (size_t iteration = 0; iteration < iterations; iteration++) {
-        const short percent = 1000 * iteration / iterations;
+        const long percent = 1000 * iteration / iterations;
         cout << "\r\bprogress: " << iteration << " / " << iterations << " (" << percent / 10 << '.' << percent % 10 << "%)";
         size_t local_length = length + iteration;
         utils::generate_array(array_type, min, max, local_length, array);
