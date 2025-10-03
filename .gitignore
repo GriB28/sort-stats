@@ -2,7 +2,8 @@
 /.idea/
 /cmake-build-debug/
 /CMakeLists.txt
-/config/__pycache__
+/config/__pycache__/
+/__pycache__/
 
 /*.exe
 /*.o
