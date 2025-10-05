@@ -8,9 +8,7 @@
 /*.exe
 /*.o
 /*.csv
-/sort-stats
-/sort-stats-sample
+/sort-stats*
 
-/img
-/data
+/data*/
 /*.txt
