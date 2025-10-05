@@ -237,5 +237,5 @@ def handle(c: list[str], settings_link: dict[str, ...]):
         args = list(e.args)
         print(
             F.RED + S.DIM + "something went wrong:",
-            F.YELLOW + S.NORMAL + f"[{e.__class__.__name__}]: \"{', '.join(args) if len(args) > 0 else '<no args>'}\""
+            F.YELLOW + S.NORMAL + f"[{e.__class__.__name__}]: \"{', '.join(list(map(str, args))) if len(args) > 0 else '<no args>'}\""
         )
