@@ -4,8 +4,23 @@ from os.path import exists
 from time import time
 from platform import system as platform_name
 import matplotlib.pyplot as plt
+import numpy as np
 
 from config import cfg, j2
+
+
+def lin_ls(x, y) -> tuple:
+    xy = np.mean(x * y)
+    x1y = np.mean(x) * np.mean(y)
+    x2 = np.mean(x * x)
+    x12 = np.mean(x) ** 2
+    y2 = np.mean(y * y)
+    y12 = np.mean(y) ** 2
+    k = (xy - x1y) / (x2 - x12)
+    b = np.mean(y) - k * np.mean(x)
+    s_k = np.sqrt(1 / x.size) * np.sqrt((y2 - y12) / (x2 - x12) - k ** 2)
+    s_b = s_k * np.sqrt(x2 - x12)
+    return k, s_k, b, s_b
 
 
 def handle(c: list[str], settings_link: dict[str, ...]):
@@ -24,6 +39,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
             print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>")
             print(F.LIGHTBLUE_EX + " > render <filename> <scale_type> [<color>]")
             print(F.LIGHTBLUE_EX + " > combine {<filename_1> <filename_2> ...} <scale_type> {<color_1> <color_2> ...}")
+            print(F.LIGHTBLUE_EX + " > approx_log_2 <filename> [<color>]")
             print(F.LIGHTBLUE_EX + " > script <filename>")
             print()
             print()
@@ -60,6 +76,12 @@ def handle(c: list[str], settings_link: dict[str, ...]):
 
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "render")
                     print(F.GREEN + S.DIM + "  > " + S.NORMAL + "renders a plot from a datafile with given name and parameters")
+
+                    print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "combine")
+                    print(F.GREEN + S.DIM + "  > " + S.NORMAL + "renders a plot from 2 or more datafile with given names and parameters")
+
+                    print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "approx_log_2")
+                    print(F.GREEN + S.DIM + "  > " + S.NORMAL + "approximates data from file and counts coeffs of poly-2")
 
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "script")
                     print(F.GREEN + S.DIM + "  > " + S.NORMAL + "loads prepared script from a file")
@@ -217,6 +239,44 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.savefig(save_file)
                 plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
+
+            elif c[1] == 'approx_log_2':
+                filename = c[2]
+                color = c[3] if len(c) > 3 else '#fa8072'
+
+                with open(filename) as csv:
+                    legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
+                    x, y = list(), list()
+                    for line in csv.readlines():
+                        line = line.split(',')
+                        current_x, current_y = int(line[0]), int(line[1])
+                        if current_x > 1 and current_y > 1:
+                            x.append(current_x)
+                            y.append(current_y)
+                x_ln = np.log(np.array(x))
+                y_ln = np.log(np.array(y))
+                x_label = "ln(" + legend[1][:legend[1].rfind(',')] + ")"
+                y_label = "ln(" + legend[2][:legend[2].rfind(',')] + ")"
+
+                k, s_k, b, s_b = lin_ls(x_ln, y_ln)
+                x_fit = np.linspace(x_ln.min(), x_ln.max(), 100)
+                y_fit = k * x_fit + b
+
+                plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
+                plt.scatter(x_ln, y_ln, color=color, s=settings_link["plot_dot_size"])
+                plt.plot(x_fit, y_fit, color='black', ms=15, label=f'LLS: k = {k:.3f}, σ = {s_k:.3f}')
+                plt.xscale('linear')
+                plt.yscale('linear')
+                plt.title(legend[0])
+                plt.legend()
+                plt.xlabel(x_label)
+                plt.ylabel(y_label)
+                plt.grid(True, alpha=.3)
+                save_file = filename.replace('.csv', '') + "_approximated.png"
+                plt.savefig(save_file)
+                plt.close()
+                print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
+
 
             elif c[1] == 'script':
                 filename = ' '.join(c[2:])
