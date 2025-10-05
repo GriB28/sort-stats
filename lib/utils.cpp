@@ -39,7 +39,7 @@ void utils::random_array(const int &min, const int &max, const size_t &length, i
 
 void utils::ascending_array(const int &min, const int &max, const size_t &length, int *array_link) {
     random_array(min, max, length, array_link);
-    sort::merge(array_link, length);
+    sort::quick(array_link, length);
 }
 void utils::descending_array(const int &min, const int &max, const size_t &length, int *array_link) {
     ascending_array(min, max, length, array_link);
