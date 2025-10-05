@@ -162,6 +162,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.grid(True, alpha=.3)
                 save_file = filename.replace('.csv', '.png')
                 plt.savefig(save_file)
+                plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
 
             elif c[1] == 'combine':
@@ -214,6 +215,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.grid(True, alpha=.3)
                 save_file = f"combined_{int(time())}.png"
                 plt.savefig(save_file)
+                plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
 
             elif c[1] == 'script':
