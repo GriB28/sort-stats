@@ -9,26 +9,20 @@ from config import cfg, j2
 
 def handle(c: list[str], settings_link: dict[str, ...]):
     try:
+        if len(c) == 0:
+            return
+
+
         if c[0] == 'menu':
             print(F.CYAN + "== MENU ==")
-            print(F.LIGHTBLUE_EX + "exit                             ",
-                  ">", F.GREEN + S.BRIGHT + "exit")
-            print(F.LIGHTBLUE_EX + "menu                             ",
-                  ">", F.YELLOW + S.BRIGHT + "this " + F.GREEN + "menu")
-            print(F.LIGHTBLUE_EX + "settings read | set <key> <value>",
-                  ">", F.GREEN + S.BRIGHT + "settings (literally)")
-            print(F.LIGHTBLUE_EX + "call <call-string>               ",
-                  ">", F.GREEN + S.BRIGHT + "calls one of the following actions:")
-            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>",
-                  ">", F.GREEN + S.BRIGHT + "launches sorting algorithm with following\n"
-                                            "parameters (delta length is max additional "
-                                            "value that forms an array of lengths for "
-                                            "generated int arrays: checked\n"
-                                            "length with L and dL will be " + S.NORMAL + "[L, L+dL)" + S.BRIGHT + ")")
-            print(F.LIGHTBLUE_EX + " > render <filename> [<color>]                     ",
-                  ">", F.GREEN + S.BRIGHT + "renders a plot from a datafile with given name")
-            print(F.LIGHTBLUE_EX + " > script <filename>                               ",
-                  ">", F.GREEN + S.BRIGHT + "loads prepared script from a file")
+            print(F.LIGHTBLUE_EX + "exit")
+            print(F.LIGHTBLUE_EX + "menu")
+            print(F.LIGHTBLUE_EX + "help [<command>]")
+            print(F.LIGHTBLUE_EX + "settings read | set <key> <value>")
+            print(F.LIGHTBLUE_EX + "call <call-string>")
+            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>")
+            print(F.LIGHTBLUE_EX + " > render <filename> <scale_type> [<color>]")
+            print(F.LIGHTBLUE_EX + " > script <filename>")
             print()
             print()
             print(
@@ -41,6 +35,29 @@ def handle(c: list[str], settings_link: dict[str, ...]):
             )
             print()
 
+        elif c[0] == 'help':
+            if len(c) > 1:
+                command = ' '.join(c[1:])
+                if command == 'exit':
+                    print(F.CYAN + S.NORMAL + "turns off the program")
+                elif command == 'menu':
+                    print(F.CYAN + S.NORMAL + "prints a menu (as above)")
+                elif command == 'help':
+                    print(F.YELLOW + S.BRIGHT + "this", F.CYAN + S.NORMAL + "page")
+                elif command == 'settings':
+                    print(F.CYAN + S.NORMAL + "operations with project settings: reading/rewriting values")
+                elif command == 'call':
+                    print(F.CYAN + S.NORMAL + "calls a script or a command:")
+                    print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "sort")
+                    print(F.GREEN + S.NORMAL + "  > launches sorting algorithm with following "
+                    "parameters (delta length is max additional value that forms an array of lengths for\n"
+                    "generated int arrays: checked length with L and dL will be " + S.NORMAL + "[L, L+dL)" + S.BRIGHT + ")")
+
+                    print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "render")
+                    print(F.GREEN + S.NORMAL + "  > renders a plot from a datafile with given name and parameters")
+
+                    print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "script")
+                    print(F.GREEN + S.NORMAL + "  > loads prepared script from a file")
 
         elif c[0] == 'settings':
             if c[1] == 'read':
@@ -117,29 +134,27 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 print(F.LIGHTBLACK_EX + "> finished...")
 
             elif c[1] == 'render':
-                if c[2] == 'combo':
-                    pass
+                filename = c[2]
+                scale = c[3].lower()
+                color = c[4] if len(c) > 4 else '#fa8072'
 
-                else:
-                    filename = c[2]
-                    color = c[3] if len(c) > 3 else '#fa8072'
-
-                    with open(filename) as csv:
-                        legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
-                        x, y = list(), list()
-                        for line in csv.readlines():
-                            line = line.split(',')
-                            x.append(int(line[0]))
-                            y.append(int(line[1]))
-                    plt.figure(figsize=(11, 8))
-                    plt.scatter(x, y, color=color, s=2)
-                    plt.title(legend[0])
-                    plt.xlabel(legend[1])
-                    plt.ylabel(legend[2])
-                    save_file = filename.replace('.csv', '.png')
-                    plt.savefig(save_file)
-                    print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
-
+                with open(filename) as csv:
+                    legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
+                    x, y = list(), list()
+                    for line in csv.readlines():
+                        line = line.split(',')
+                        x.append(int(line[0]))
+                        y.append(int(line[1]))
+                plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
+                plt.scatter(x, y, color=color, s=settings_link["plot_dot_size"])
+                plt.set_xscale(scale)
+                plt.set_yscale(scale)
+                plt.title(legend[0])
+                plt.xlabel(legend[1])
+                plt.ylabel(legend[2])
+                save_file = filename.replace('.csv', '.png')
+                plt.savefig(save_file)
+                print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
 
             elif c[1] == 'script':
                 filename = ' '.join(c[2:])
@@ -160,5 +175,5 @@ def handle(c: list[str], settings_link: dict[str, ...]):
         args = list(e.args)
         print(
             F.RED + S.DIM + "something went wrong:",
-            F.YELLOW + S.NORMAL + f"[{e.__class__.__name__}]: \"{args if len(args) > 0 else '<no args>'}\""
+            F.YELLOW + S.NORMAL + f"[{e.__class__.__name__}]: \"{', '.join(args) if len(args) > 0 else '<no args>'}\""
         )
