@@ -58,6 +58,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
 
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "script")
                     print(F.GREEN + S.NORMAL + "  > loads prepared script from a file")
+            else:
+                print(F.CYAN + S.NORMAL + "use", F.YELLOW + S.BRIGHT + "help <command>", F.CYAN + S.NORMAL + "to see info")
 
         elif c[0] == 'settings':
             if c[1] == 'read':
