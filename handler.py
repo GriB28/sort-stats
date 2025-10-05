@@ -1,6 +1,7 @@
 from colorama import Fore as F, Style as S
 from os import system, listdir
 from os.path import exists
+from time import time
 from platform import system as platform_name
 import matplotlib.pyplot as plt
 
@@ -22,6 +23,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
             print(F.LIGHTBLUE_EX + "call <call-string>")
             print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>")
             print(F.LIGHTBLUE_EX + " > render <filename> <scale_type> [<color>]")
+            print(F.LIGHTBLUE_EX + " > combine {<filename_1> <filename_2> ...} <scale_type> {<color_1> <color_2> ...}")
             print(F.LIGHTBLUE_EX + " > script <filename>")
             print()
             print()
@@ -49,15 +51,18 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 elif command == 'call':
                     print(F.CYAN + S.NORMAL + "calls a script or a command:")
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "sort")
-                    print(F.GREEN + S.NORMAL + "  > launches sorting algorithm with following "
-                    "parameters (delta length is max additional value that forms an array of lengths for\n"
-                    "generated int arrays: checked length with L and dL will be " + S.NORMAL + "[L, L+dL)" + S.BRIGHT + ")")
+                    print(
+                        F.GREEN + S.DIM + "  > " + S.NORMAL + "launches sorting algorithm with following parameters (delta length is max additional value that",
+                        F.GREEN + S.NORMAL + "forms an array of lengths for generated int arrays: checked length with L and dL will be " +\
+                        F.BLUE + "[L, L+dL)" + F.GREEN + ")",
+                        sep='\n'
+                    )
 
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "render")
-                    print(F.GREEN + S.NORMAL + "  > renders a plot from a datafile with given name and parameters")
+                    print(F.GREEN + S.DIM + "  > " + S.NORMAL + "renders a plot from a datafile with given name and parameters")
 
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "script")
-                    print(F.GREEN + S.NORMAL + "  > loads prepared script from a file")
+                    print(F.GREEN + S.DIM + "  > " + S.NORMAL + "loads prepared script from a file")
             else:
                 print(F.CYAN + S.NORMAL + "use", F.YELLOW + S.BRIGHT + "help <command>", F.CYAN + S.NORMAL + "to see info")
 
@@ -149,12 +154,65 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                         y.append(int(line[1]))
                 plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
                 plt.scatter(x, y, color=color, s=settings_link["plot_dot_size"])
-                plt.set_xscale(scale)
-                plt.set_yscale(scale)
+                plt.xscale(scale)
+                plt.yscale(scale)
                 plt.title(legend[0])
                 plt.xlabel(legend[1])
                 plt.ylabel(legend[2])
+                plt.grid(True, alpha=.3)
                 save_file = filename.replace('.csv', '.png')
+                plt.savefig(save_file)
+                print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
+
+            elif c[1] == 'combine':
+                i = 2
+                filenames = [c[i][1:]]
+                i += 1
+                while i < len(c) and c[i].count('}') == 0:
+                    filenames.append(c[i])
+                    i += 1
+                filenames.append(c[i][:-1])
+                if len(filenames) < 2:
+                    raise IndexError("less then 2 subplots")
+
+                i += 1
+                scale = c[i].lower()
+                i += 1
+                colors = [c[i][1:]]+ c[i+1:i+len(filenames)-1] + [c[i+len(filenames)-1][:-1]]
+
+                plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
+
+                with open(filenames[0]) as csv:
+                    print(0)
+                    global_legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
+                    x_global, y = list(), list()
+                    for line in csv.readlines():
+                        line = line.split(',')
+                        x_global.append(int(line[0]))
+                        y.append(int(line[1]))
+                    print(len(x_global), len(y))
+                    plt.scatter(x_global, y, color=colors[0], s=settings_link["plot_dot_size"], label=global_legend[0])
+
+                for j in range(1, len(filenames)):
+                    print(j)
+                    with open(filenames[j]) as csv:
+                        legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
+                        # x, y = list(), list()
+                        y = list()
+                        for line in csv.readlines():
+                            line = line.split(',')
+                            # x.append(int(line[0]))
+                            y.append(int(line[1]))
+                    print(len(x_global), len(y))
+                    plt.scatter(x_global, y, color=colors[j], s=settings_link["plot_dot_size"], label=legend[0])
+                plt.xscale(scale)
+                plt.yscale(scale)
+                plt.title("merged plots")
+                plt.legend()
+                plt.xlabel(global_legend[1])
+                plt.ylabel(global_legend[2])
+                plt.grid(True, alpha=.3)
+                save_file = f"combined_{int(time())}.png"
                 plt.savefig(save_file)
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
 
