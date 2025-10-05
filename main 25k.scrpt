@@ -1,7 +1,7 @@
 settings set max 2000000
 settings set min -2000000
 settings set length 1
-settings set delta 15000
+settings set delta 25001
 
 call sort bubble_0 bubble_0_0 0 bubble -O0 [rnd]
 call render data/bubble_0_0.csv
