@@ -1,1 +1,1 @@
-call combine {data/insertion_0.csv data/merge_0.csv data/heap_0.csv data/quick_0.csv} linear {#00ff00 #ff0000 #ffff00 #0000ff}
+call combine {data/insertion_0.csv data/bubble_0_0.csv data/selection_0.csv} linear {#00ff00 #ff0000 #0000ff}
