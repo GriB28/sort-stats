@@ -1,0 +1,13 @@
+settings set max 2000000
+settings set min -2000000
+settings set length 1
+settings set delta 1001
+
+call sort bubble_0 small_bubble 0 bubble -O0 [rnd]
+call sort insertion small_insertion 0 insertion [rnd]
+call sort selection small_selection 0 selection [rnd]
+call sort merge small_merge 0 merge [rnd]
+call sort heap small_heap 0 heap [rnd]
+call sort quick small_quick 0 quick [rnd]
+
+call combine {data/small_bubble.csv data/small_insertion.csv data/small_selection.csv data/small_merge.csv data/small_heap.csv data/small_quick.csv} linear {#0000E2 #16b0dd #9900FF #FF0000 #FF7F00 #4aa94a}
