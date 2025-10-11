@@ -33,3 +33,26 @@ call render data/heap_2.csv linear #fa8080
 call render data/quick_0.csv linear #fa8080
 call render data/quick_1.csv linear #fa8080
 call render data/quick_2.csv linear #fa8080
+
+call combine {data/bubble_0_2.csv data/bubble_0_0.csv data/bubble_0_1.csv} linear {#FF0000 #0000E2 #4AA94A}
+call combine {data/insertion_2.csv data/insertion_0.csv data/insertion_1.csv} linear {#FF0000 #0000E2 #4AA94A}
+call combine {data/selection_2.csv data/selection_0.csv data/selection_1.csv} linear {#FF0000 #0000E2 #4AA94A}
+
+call combine {data/merge_2.csv data/merge_0.csv data/merge_1.csv} linear {#FF0000 #0000E2 #4AA94A}
+call combine {data/heap_2.csv data/heap_0.csv data/heap_1.csv} linear {#FF0000 #0000E2 #4AA94A}
+call combine {data/quick_2.csv data/quick_0.csv data/quick_1.csv} linear {#FF0000 #0000E2 #4AA94A}
+
+call approx_log_2 data/bubble_0_0.csv
+call approx_log_2 data/bubble_1_0.csv
+call approx_log_2 data/bubble_2_0.csv
+call approx_log_2 data/bubble_3_0.csv
+call approx_log_2 data/insertion_0.csv
+call approx_log_2 data/selection_0.csv
+
+call combine {data/bubble_0_0.csv data/bubble_1_0.csv data/bubble_2_0.csv data/bubble_3_0.csv} linear {#FF0000 #FFA500 #0000E2 #4AA94A}
+call combine {data/bubble_0_0.csv data/insertion_0.csv data/selection_0.csv data/merge_0.csv data/heap_0.csv data/quick_0.csv} linear {#F60000 #FF8C00 #03A652 #5BC4BF #3783FF #4815AA}
+
+call combine {data/bubble_0_0.csv data/insertion_0.csv data/selection_0.csv} linear {#FF0000 #00FF00 #0000FF}
+call combine {data/merge_0.csv data/heap_0.csv data/quick_0.csv} linear {#FF0000 #00FF00 #0000FF}
+
+call script small arrays
