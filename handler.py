@@ -191,6 +191,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
 
             slash_position = filename.rfind("/")
             dir_path, filename = filename[:slash_position + 1], filename[slash_position + 1:]
+            while exists(dir_path + "filtered_" + filename):
+                filename = '(1) ' + filename
             filename = dir_path + "filtered_" + filename
             with open(filename, 'w') as csv:
                 csv.write(first_line)
@@ -271,7 +273,10 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.xlabel(legend[1])
                 plt.ylabel(legend[2])
                 plt.grid(True, alpha=.3)
-                save_file = filename.replace('.csv', '.png')
+                save_file = filename.replace('.csv', '')
+                while exists(save_file + '.png'):
+                    save_file += '(1)'
+                save_file += '.png'
                 plt.savefig(save_file)
                 plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
@@ -320,7 +325,10 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.xlabel(global_legend[1])
                 plt.ylabel(global_legend[2])
                 plt.grid(True, alpha=.3)
-                save_file = f"combined_{int(time())}.png"
+                save_file = f"combined_{int(time())}"
+                while exists(save_file + '.png'):
+                    save_file += '(1)'
+                save_file += '.png'
                 plt.savefig(save_file)
                 plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
@@ -359,7 +367,10 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.xlabel(x_label)
                 plt.ylabel(y_label)
                 plt.grid(True, alpha=.3)
-                save_file = filename.replace('.csv', '') + "_approximated.png"
+                save_file = filename.replace('.csv', '') + "_approximated"
+                while exists(save_file + '.png'):
+                    save_file += '(1)'
+                save_file += '.png'
                 plt.savefig(save_file)
                 plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
