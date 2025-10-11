@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from config import cfg, j2
+from lib import sorts, utils
 
 
 def lin_ls(x, y) -> tuple:
@@ -21,6 +22,26 @@ def lin_ls(x, y) -> tuple:
     s_k = np.sqrt(1 / x.size) * np.sqrt((y2 - y12) / (x2 - x12) - k ** 2)
     s_b = s_k * np.sqrt(x2 - x12)
     return k, s_k, b, s_b
+
+
+def test_sort(sort_type: str, output_file: str, graph_name: str, x_axis_name: str, y_axis_name: str,
+              length: int, max_: int, min_: int, array_type: int, delta: int):
+    print("applying config...")
+    with open("data/" + output_file + ".csv", 'w') as result_stream:
+        print('#' + graph_name, x_axis_name, y_axis_name, sep='\t', file=result_stream)
+
+        print("configuring is over.\nstarting calculating...")
+        for iteration in range(delta):
+            print(f"progress: {iteration} / {delta} ({100 * iteration / delta:.1f}%)", end='\r\b')
+            local_length = length + iteration
+            array = utils.generate_array(array_type, min_, max_, local_length)
+
+            start_time_stamp = time() * 1e9
+            sorts.bubble(array, local_length) if sort_type == 'bubble' else sorts.merge(array, local_length)
+            stop_time_stamp = time() * 1e9
+
+            print(local_length, int(stop_time_stamp - start_time_stamp), sep=',', file=result_stream)
+    print("completed")
 
 
 def handle(c: list[str], settings_link: dict[str, ...]):
@@ -182,9 +203,13 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 raise IndexError("not enough args")
 
             if c[1] == 'sort':
+                is_python = False
                 sort = c[2]
                 if sort not in listdir(cfg.PATH.BIN_local):
-                    raise ValueError("bad sort name")
+                    if sort in cfg.PYTHON_SORTS:
+                        is_python = True
+                    else:
+                        raise ValueError("bad sort name")
 
                 print(F.LIGHTBLACK_EX + "> generating starting config...")
 
@@ -201,20 +226,26 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 x_axis = 'length,_elements'    # аналогичный энкодинг
                 y_axis = 'time,_ns'
 
-                with open("data/input.csv", 'w', encoding='utf8') as input_file:
-                    print(output_file_name, graph_name, x_axis, y_axis,
-                          settings_link['length'], settings_link["max"], settings_link["min"],
-                          array_type, settings_link["delta"],
-                          file=input_file)
-
                 print(F.LIGHTBLACK_EX + "> calculating...")
-                if platform_name() == 'Linux':
-                    system(f"./{cfg.PATH.BIN_local}{sort}")
-                elif platform_name() == 'Windows':
-                    system(f"{cfg.PATH.BIN_local}{sort}")
+                if is_python:
+                    test_sort(sort[:sort.find('_')], output_file_name, graph_name, x_axis, y_axis,
+                              settings_link['length'], settings_link["max"], settings_link["min"],
+                              array_type, settings_link["delta"])
+
                 else:
-                    print(F.RED + S.DIM + "> current platform is not supported... yet...")
-                    exit()
+                    with open("data/input.csv", 'w', encoding='utf8') as input_file:
+                        print(output_file_name, graph_name, x_axis, y_axis,
+                              settings_link['length'], settings_link["max"], settings_link["min"],
+                              array_type, settings_link["delta"],
+                              file=input_file)
+
+                    if platform_name() == 'Linux':
+                        system(f"./{cfg.PATH.BIN_local}{sort}")
+                    elif platform_name() == 'Windows':
+                        system(f"{cfg.PATH.BIN_local}{sort}")
+                    else:
+                        print(F.RED + S.DIM + "> current platform is not supported... yet...")
+                        exit()
                 print(F.LIGHTBLACK_EX + "> finished...")
 
             elif c[1] == 'render':

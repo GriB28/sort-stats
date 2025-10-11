@@ -35,4 +35,8 @@ BINARIES_WINDOWS = (
     PATH.BIN + "heap.exe",
     PATH.BIN + "quick.exe"
 )
+PYTHON_SORTS = (
+    "bubble_python",
+    "merge_python"
+)
 POSSIBLE_SORTS = ("bubble_0", "bubble_1", "bubble_2", "bubble_3", "insertion", "selection", "merge", "heap", "quick")

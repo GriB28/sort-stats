@@ -1,0 +1,15 @@
+settings set max 2000000
+settings set min -2000000
+settings set length 1
+
+settings set delta 3001
+call sort bubble_python bubble_python 0 bubble on Python [rnd]
+
+settings set delta 10001
+call sort merge_python merge_python 0 merge on Python [rnd]
+
+call render data/bubble_python.csv linear #fa8080
+call render data/merge_python.csv linear #fa8080
+
+call combine {data/bubble_python.csv data/bubble_0_0.csv} linear {#e27100 #7100e2}
+call combine {data/merge_python.csv data/merge_0.csv} linear {#e27100 #7100e2}
