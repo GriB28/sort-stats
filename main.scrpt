@@ -1,67 +1,40 @@
 settings set max 2000000
 settings set min -2000000
 settings set length 1
-settings set delta 1500
+settings set delta 25001
 
 call sort bubble_0 bubble_0_0 0 bubble -O0 [rnd]
-call render data/bubble_0_0.csv linear
 call sort bubble_0 bubble_0_1 1 bubble -O0 [asc]
-call render data/bubble_0_1.csv linear
 call sort bubble_0 bubble_0_2 2 bubble -O0 [desc]
-call render data/bubble_0_2.csv linear
 
 call sort bubble_1 bubble_1_0 0 bubble -O1 [rnd]
-call render data/bubble_1_0.csv linear
 call sort bubble_1 bubble_1_1 1 bubble -O1 [asc]
-call render data/bubble_1_1.csv linear
 call sort bubble_1 bubble_1_2 2 bubble -O1 [desc]
-call render data/bubble_1_2.csv linear
 
 call sort bubble_2 bubble_2_0 0 bubble -O2 [rnd]
-call render data/bubble_2_0.csv linear
 call sort bubble_2 bubble_2_1 1 bubble -O2 [asc]
-call render data/bubble_2_1.csv linear
 call sort bubble_2 bubble_2_2 2 bubble -O2 [desc]
-call render data/bubble_2_2.csv linear
 
 call sort bubble_3 bubble_3_0 0 bubble -O3 [rnd]
-call render data/bubble_3_0.csv linear
 call sort bubble_3 bubble_3_1 1 bubble -O3 [asc]
-call render data/bubble_3_1.csv linear
 call sort bubble_3 bubble_3_2 2 bubble -O3 [desc]
-call render data/bubble_3_2.csv linear
 
 call sort insertion insertion_0 0 insertion [rnd]
-call render data/insertion_0.csv linear
 call sort insertion insertion_1 1 insertion [asc]
-call render data/insertion_1.csv linear
 call sort insertion insertion_2 2 insertion [desc]
-call render data/insertion_2.csv linear
 
 call sort selection selection_0 0 selection [rnd]
-call render data/selection_0.csv linear
 call sort selection selection_1 1 selection [asc]
-call render data/selection_1.csv linear
 call sort selection selection_2 2 selection [desc]
-call render data/selection_2.csv linear
 
 call sort merge merge_0 0 merge [rnd]
-call render data/merge_0.csv linear
 call sort merge merge_1 1 merge [asc]
-call render data/merge_1.csv linear
 call sort merge merge_2 2 merge [desc]
-call render data/merge_2.csv linear
 
 call sort heap heap_0 0 heap [rnd]
-call render data/heap_0.csv linear
 call sort heap heap_1 1 heap [asc]
-call render data/heap_1.csv linear
 call sort heap heap_2 2 heap [desc]
-call render data/heap_2.csv linear
 
 call sort quick quick_0 0 quick [rnd]
-call render data/quick_0.csv linear
 call sort quick quick_1 1 quick [asc]
-call render data/quick_1.csv linear
 call sort quick quick_2 2 quick [desc]
-call render data/quick_2.csv linear
