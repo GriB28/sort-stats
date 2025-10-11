@@ -3,7 +3,8 @@
     "min": -2000000, 
     "length": 1, 
     "delta": 25001,
-    "plot_fig_x": 11,
-    "plot_fig_y": 8,
+    "filter_coefficient": 1.6,
+    "plot_fig_x": 11, 
+    "plot_fig_y": 8, 
     "plot_dot_size": 2
 }

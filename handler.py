@@ -35,6 +35,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
             print(F.LIGHTBLUE_EX + "menu")
             print(F.LIGHTBLUE_EX + "help [<command>]")
             print(F.LIGHTBLUE_EX + "settings read | set <key> <value>")
+            print(F.LIGHTBLUE_EX + "filter <filename> [<coefficient>]")
             print(F.LIGHTBLUE_EX + "call <call-string>")
             print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>")
             print(F.LIGHTBLUE_EX + " > render <filename> <scale_type> [<color>]")
@@ -64,6 +65,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                     print(F.YELLOW + S.BRIGHT + "this", F.CYAN + S.NORMAL + "page")
                 elif command == 'settings':
                     print(F.CYAN + S.NORMAL + "operations with project settings: reading/rewriting values")
+                elif command == 'filter':
+                    print(F.CYAN + S.NORMAL + "clears noise in the selected datafile by the cleaning coefficient (default: in settings)")
                 elif command == 'call':
                     print(F.CYAN + S.NORMAL + "calls a script or a command:")
                     print(F.CYAN + S.DIM + " >", F.CYAN + S.BRIGHT + "sort")
@@ -122,6 +125,58 @@ def handle(c: list[str], settings_link: dict[str, ...]):
             else:
                 raise ValueError("unknown argument")
 
+        elif c[0] == 'filter':
+            filename = c[1]
+            if len(c) > 2:
+                k = c[2]
+                k = float(k) if k.find('%') == -1 else float(k[:-1]) / 100
+            else:
+                k = settings_link["filter_coefficient"]
+
+            with open(filename) as csv:
+                first_line = csv.readline()
+                x, y = list(), list()
+                for line in csv.readlines():
+                    line = line.split(',')
+                    x.append(int(line[0]))
+                    y.append(int(line[1]))
+
+            print(F.LIGHTBLACK_EX + f"before filtration: length   = {len(y)}")
+            print(F.LIGHTBLACK_EX + f"                   mean     = {np.mean(y)}")
+            print(F.LIGHTBLACK_EX + f"                   variance = {np.var(y)}")
+            print(F.LIGHTBLACK_EX + f"                   max      = {max(y)}")
+            print(F.LIGHTBLACK_EX + f"                   min      = {min(y)}")
+
+            i = 0
+            while y[i] == 0:
+                i += 1
+            i = max(100, i < len(x) / 20, i + 1)
+            y_filtered = list()
+            while i < len(x):
+                if y[i] != 0 and y[i - 1] / y[i] >= k:
+                    x.pop(i)
+                    y_filtered.append(y.pop(i))
+                    i -= 1
+                i += 1
+
+            print(F.LIGHTBLACK_EX + f"after filtration:  length   = {len(y)}")
+            print(F.LIGHTBLACK_EX + f"                   mean     = {np.mean(y)}")
+            print(F.LIGHTBLACK_EX + f"                   variance = {np.var(y)}")
+            print(F.LIGHTBLACK_EX + f"                   max      = {max(y)}")
+            print(F.LIGHTBLACK_EX + f"                   min      = {min(y)}")
+            print(F.LIGHTBLACK_EX + f"filtered values: {', '.join(map(str, [_ for _ in y_filtered][:10]))}"
+                                    f"{', ...' if len(y_filtered) > 10 else ('' if len(y_filtered) > 0
+                                                                             else '<nothing>')}")
+
+            slash_position = filename.rfind("/")
+            dir_path, filename = filename[:slash_position + 1], filename[slash_position + 1:]
+            filename = dir_path + "filtered_" + filename
+            with open(filename, 'w') as csv:
+                csv.write(first_line)
+                for i in range(len(x)):
+                    print(x[i], y[i], file=csv, sep=',')
+            print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + filename)
+
         elif c[0] == 'call':
             if len(c) < 2:
                 raise IndexError("not enough args")
@@ -167,6 +222,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 scale = c[3].lower()
                 color = c[4] if len(c) > 4 else '#fa8072'
 
+                print(F.LIGHTBLACK_EX + "reading a datafile...")
                 with open(filename) as csv:
                     legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                     x, y = list(), list()
@@ -174,6 +230,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                         line = line.split(',')
                         x.append(int(line[0]))
                         y.append(int(line[1]))
+
+                print(F.LIGHTBLACK_EX + "rendering...")
                 plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
                 plt.scatter(x, y, color=color, s=settings_link["plot_dot_size"])
                 plt.xscale(scale)
@@ -206,27 +264,23 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
 
                 with open(filenames[0]) as csv:
-                    print(0)
                     global_legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                     x_global, y = list(), list()
                     for line in csv.readlines():
                         line = line.split(',')
                         x_global.append(int(line[0]))
                         y.append(int(line[1]))
-                    print(len(x_global), len(y))
-                    plt.scatter(x_global, y, color=colors[0], s=settings_link["plot_dot_size"], label=global_legend[0])
+                print(F.LIGHTBLACK_EX + f"rendering #{0}: x_global={len(x_global)}, y={len(y)}")
+                plt.scatter(x_global, y, color=colors[0], s=settings_link["plot_dot_size"], label=global_legend[0])
 
                 for j in range(1, len(filenames)):
-                    print(j)
                     with open(filenames[j]) as csv:
                         legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
-                        # x, y = list(), list()
                         y = list()
                         for line in csv.readlines():
                             line = line.split(',')
-                            # x.append(int(line[0]))
                             y.append(int(line[1]))
-                    print(len(x_global), len(y))
+                    print(F.LIGHTBLACK_EX + f"rendering #{j}: [x_global], y={len(y)}")
                     plt.scatter(x_global, y, color=colors[j], s=settings_link["plot_dot_size"], label=legend[0])
                 plt.xscale(scale)
                 plt.yscale(scale)
@@ -244,6 +298,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 filename = c[2]
                 color = c[3] if len(c) > 3 else '#fa8072'
 
+                print(F.LIGHTBLACK_EX + "reading a datafile...")
                 with open(filename) as csv:
                     legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                     x, y = list(), list()
@@ -262,6 +317,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 x_fit = np.linspace(x_ln.min(), x_ln.max(), 100)
                 y_fit = k * x_fit + b
 
+                print(F.LIGHTBLACK_EX + "rendering...")
                 plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
                 plt.scatter(x_ln, y_ln, color=color, s=settings_link["plot_dot_size"])
                 plt.plot(x_fit, y_fit, color='black', ms=15, label=f'LLS: k = {k:.3f}, σ = {s_k:.3f}')
@@ -277,7 +333,6 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 plt.close()
                 print(F.GREEN + "Successfully saved at", F.YELLOW + S.DIM + save_file)
 
-
             elif c[1] == 'script':
                 filename = ' '.join(c[2:])
                 if not exists(filename):
@@ -287,7 +342,6 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                         line = line.strip()
                         print(F.LIGHTBLACK_EX + "$ received:", line)
                         handle(line.split(), settings_link)
-
 
         else:
             raise ValueError("parsing failed")
