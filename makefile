@@ -1,7 +1,7 @@
 FLAGS = -std=c++17
 
 all:
-	echo "you have to use one of these names: bubble_0, bubble_1, bubble_2, insertion, selection, merge, hoar, quick"
+	echo "you have to use one of these names: bubble_0, bubble_1, bubble_2, insertion, selection, merge, heap, quick"
 
 bubble_0:
 	g++ sorts/bubble.cpp lib/sorts.cpp lib/utils.cpp -O0 -o bin/bubble_0
