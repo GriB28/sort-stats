@@ -3,12 +3,12 @@ settings set min -2000000
 settings set length 1
 
 settings set delta 2501
-call sort bubble_python bubble_python 0 bubble on Python [rnd]
-call sort bubble_0 bubble_cpp 0 bubble on C++ [rnd]
+call sort bubble_python bubble_python 0 1 bubble on Python [rnd]
+call sort bubble_0 bubble_cpp 0 1 bubble on C++ [rnd]
 
 settings set delta 10001
-call sort merge_python merge_python 0 merge on Python [rnd]
-call sort merge merge_cpp 0 merge on C++ [rnd]
+call sort merge_python merge_python 0 1 merge on Python [rnd]
+call sort merge merge_cpp 0 1 merge on C++ [rnd]
 
 call render data/bubble_python.csv linear #fa8080
 call render data/merge_python.csv linear #fa8080
