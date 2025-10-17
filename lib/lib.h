@@ -36,7 +36,7 @@ namespace utils {
     void descending_array(const int &min, const int &max, const size_t &length, int *array_link);
 
     void prepare_result_file(fstream *&filestream, const string &graph_name, const string &x_axis_name, const string &y_axis_name);
-    void add_result(const size_t &length, const long long &dtime);
+    void add_result(const size_t &length, const double &dtime);
 }
 
 

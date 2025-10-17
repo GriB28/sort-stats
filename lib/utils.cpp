@@ -57,4 +57,4 @@ void utils::prepare_result_file(fstream *&filestream, const string &graph_name, 
     *stream_link << '#' << graph_name << '\t' << x_axis_name << '\t' << y_axis_name << '\n';
 }
 
-void utils::add_result(const size_t &length, const long long &dtime) { *stream_link << length << ',' << dtime << '\n'; }
+void utils::add_result(const size_t &length, const double &dtime) { *stream_link << length << ',' << dtime << '\n'; }
