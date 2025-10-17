@@ -264,9 +264,9 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                     legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                     x, y = list(), list()
                     for line in csv.readlines():
-                        line = line.split(',')
+                        line = line.strip().split(',')
                         x.append(int(line[0]))
-                        y.append(int(line[1]))
+                        y.append(float(line[1]))
 
                 print(F.LIGHTBLACK_EX + "rendering...")
                 plt.figure(figsize=(settings_link["plot_fig_x"], settings_link["plot_fig_y"]))
@@ -307,9 +307,9 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                     global_legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                     x_global, y = list(), list()
                     for line in csv.readlines():
-                        line = line.split(',')
+                        line = line.strip().split(',')
                         x_global.append(int(line[0]))
-                        y.append(int(line[1]))
+                        y.append(float(line[1]))
                 print(F.LIGHTBLACK_EX + f"rendering #{0}: x_global={len(x_global)}, y={len(y)}")
                 plt.scatter(x_global, y, color=colors[0], s=settings_link["plot_dot_size"], label=global_legend[0])
 
@@ -318,8 +318,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                         legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                         y = list()
                         for line in csv.readlines():
-                            line = line.split(',')
-                            y.append(int(line[1]))
+                            line = line.strip().split(',')
+                            y.append(float(line[1]))
                     print(F.LIGHTBLACK_EX + f"rendering #{j}: [x_global], y={len(y)}")
                     plt.scatter(x_global, y, color=colors[j], s=settings_link["plot_dot_size"], label=legend[0])
                 plt.xscale(scale)
@@ -346,8 +346,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                     legend = list(map(lambda s: s.replace('_', ' '), csv.readline().strip()[1:].split('\t')))
                     x, y = list(), list()
                     for line in csv.readlines():
-                        line = line.split(',')
-                        current_x, current_y = int(line[0]), int(line[1])
+                        line = line.strip().split(',')
+                        current_x, current_y = int(line[0]), float(line[1])
                         if current_x > 1 and current_y > 1:
                             x.append(current_x)
                             y.append(current_y)
