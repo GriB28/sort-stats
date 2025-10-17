@@ -14,10 +14,10 @@ int main() {
 
     size_t length, iterations;
     int max, min;
-    short array_type;
+    short array_type, averaging;
     string output_file, graph_name, Ox, Oy;
     data >> output_file >> graph_name >> Ox >> Oy;
-    data >> length >> max >> min >> array_type >> iterations;
+    data >> length >> max >> min >> array_type >> averaging >> iterations;
 
     auto *result = new fstream("data/" + output_file + ".csv", std::ios::out);
     utils::prepare_result_file(result, graph_name, Ox, Oy);
@@ -27,13 +27,17 @@ int main() {
         const long percent = 1000 * iteration / iterations;
         cout << "\r\bprogress: " << iteration << " / " << iterations << " (" << percent / 10 << '.' << percent % 10 << "%)";
         size_t local_length = length + iteration;
-        utils::generate_array(array_type, min, max, local_length, array);
+        long long measured_time = 0;
 
-        const long long start_time_stamp = utils::get_time();
-        sort::quick(array, local_length);
-        const long long stop_time_stamp = utils::get_time();
+        for (short _ = 0; _ < averaging; _++) {
+            utils::generate_array(array_type, min, max, local_length, array);
+            const long long start_time_stamp = utils::get_time();
+            sort::quick(array, local_length);
+            const long long stop_time_stamp = utils::get_time();
+            measured_time += stop_time_stamp - start_time_stamp;
+        }
 
-        utils::add_result(local_length, stop_time_stamp - start_time_stamp);
+        utils::add_result(local_length, measured_time / averaging);
     }
     cout << "\r\bcompleted\n";
     delete result;

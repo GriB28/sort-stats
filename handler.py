@@ -25,7 +25,7 @@ def lin_ls(x, y) -> tuple:
 
 
 def test_sort(sort_type: str, output_file: str, graph_name: str, x_axis_name: str, y_axis_name: str,
-              length: int, max_: int, min_: int, array_type: int, delta: int):
+              length: int, max_: int, min_: int, array_type: int, averaging: int, delta: int):
     print("applying config...")
     with open("data/" + output_file + ".csv", 'w') as result_stream:
         print('#' + graph_name, x_axis_name, y_axis_name, sep='\t', file=result_stream)
@@ -36,11 +36,14 @@ def test_sort(sort_type: str, output_file: str, graph_name: str, x_axis_name: st
             local_length = length + iteration
             array = utils.generate_array(array_type, min_, max_, local_length)
 
-            start_time_stamp = time() * 1e9
-            sorts.bubble(array, local_length) if sort_type == 'bubble' else sorts.merge(array, local_length)
-            stop_time_stamp = time() * 1e9
+            measured_time = 0
+            for _ in range(averaging):
+                start_time_stamp = time() * 1e9
+                sorts.bubble(array, local_length) if sort_type == 'bubble' else sorts.merge(array, local_length)
+                stop_time_stamp = time() * 1e9
+                measured_time += stop_time_stamp - start_time_stamp
 
-            print(local_length, int(stop_time_stamp - start_time_stamp), sep=',', file=result_stream)
+            print(local_length, int(measured_time / averaging), sep=',', file=result_stream)
     print("completed")
 
 
@@ -58,7 +61,7 @@ def handle(c: list[str], settings_link: dict[str, ...]):
             print(F.LIGHTBLUE_EX + "settings read | set <key> <value>")
             print(F.LIGHTBLUE_EX + "filter <filename> [<coefficient>]")
             print(F.LIGHTBLUE_EX + "call <call-string>")
-            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <graph_name>")
+            print(F.LIGHTBLUE_EX + " > sort <name> <filename> <array_type> <averaging> <graph_name>")
             print(F.LIGHTBLUE_EX + " > render <filename> <scale_type> [<color>]")
             print(F.LIGHTBLUE_EX + " > combine {<filename_1> <filename_2> ...} <scale_type> {<color_1> <color_2> ...}")
             print(F.LIGHTBLUE_EX + " > approx_log_2 <filename> [<color>]")
@@ -221,7 +224,8 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                     output_file_name = output_file_name[right_dot_marker:]
 
                 array_type = int(c[4])
-                graph_name = ' '.join(c[5:]).replace(' ', '_')  # энкодим пробелы, чтобы не думать сильно
+                averaging = int(c[5])
+                graph_name = '_'.join(c[6:])   # энкодим пробелы, чтобы не думать сильно
                 if len(graph_name) == 0:
                     raise IndexError("not enough iterations provided: 0")
 
@@ -232,13 +236,13 @@ def handle(c: list[str], settings_link: dict[str, ...]):
                 if is_python:
                     test_sort(sort[:sort.find('_')], output_file_name, graph_name, x_axis, y_axis,
                               settings_link['length'], settings_link["max"], settings_link["min"],
-                              array_type, settings_link["delta"])
+                              array_type, averaging, settings_link["delta"])
 
                 else:
                     with open("data/input.csv", 'w', encoding='utf8') as input_file:
                         print(output_file_name, graph_name, x_axis, y_axis,
                               settings_link['length'], settings_link["max"], settings_link["min"],
-                              array_type, settings_link["delta"],
+                              array_type, averaging, settings_link["delta"],
                               file=input_file)
 
                     if platform_name() == 'Linux':
